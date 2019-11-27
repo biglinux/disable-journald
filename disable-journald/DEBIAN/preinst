@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+package_name=disable-journald
+mkdir -p "/usr/share/dpkgdivert/disable-journald"
+case "$1" in
+  install)
+    dpkg-divert --package "$package_name" --divert "/usr/share/dpkgdivert/disable-journald/etcsystemdjournald.conf" --rename "/etc/systemd/journald.conf"
+    ;;
+  upgrade)
+if [ "$(dpkg-divert --list "/etc/systemd/journald.conf")" = "" ]
+then
+    dpkg-divert --package "$package_name" --divert "/usr/share/dpkgdivert/disable-journald/etcsystemdjournald.conf" --rename "/etc/systemd/journald.conf"
+fi
+;;
+esac
+exit 0
